@@ -5,8 +5,33 @@ from .models import Project, Task
 
 def project_list(request):
     """项目列表页面"""
-    projects = Project.objects.all()
-    return render(request, 'projects/project_list.html', {'projects': projects})
+    status_filter = request.GET.get('status', '')
+    
+    if status_filter:
+        projects = Project.objects.filter(status=status_filter)
+    else:
+        projects = Project.objects.all()
+    
+    # 获取所有可能的状态值用于过滤选项
+    all_statuses = Project.STATUS_CHOICES
+    
+    # 统计各个状态的项目数量
+    total_count = Project.objects.count()
+    pending_count = Project.objects.filter(status='pending').count()
+    in_progress_count = Project.objects.filter(status='in_progress').count()
+    completed_count = Project.objects.filter(status='completed').count()
+    cancelled_count = Project.objects.filter(status='cancelled').count()
+    
+    return render(request, 'projects/project_list.html', {
+        'projects': projects,
+        'selected_status': status_filter,
+        'all_statuses': all_statuses,
+        'total_count': total_count,
+        'pending_count': pending_count,
+        'in_progress_count': in_progress_count,
+        'completed_count': completed_count,
+        'cancelled_count': cancelled_count
+    })
 
 
 def project_detail(request, pk):
