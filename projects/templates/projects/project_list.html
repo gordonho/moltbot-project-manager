@@ -47,15 +47,16 @@
                                 </a>
                             </td>
                             <td>
-                                {% if project.status == 'pending' %}
-                                    <span class="badge bg-secondary">待处理</span>
-                                {% elif project.status == 'in_progress' %}
-                                    <span class="badge bg-warning text-dark">处理中</span>
-                                {% elif project.status == 'completed' %}
-                                    <span class="badge bg-success">已完成</span>
-                                {% elif project.status == 'cancelled' %}
-                                    <span class="badge bg-danger">已取消</span>
-                                {% endif %}
+                                <form method="post" action="{% url 'project_list' %}" class="d-inline status-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="project_id" value="{{ project.pk }}">
+                                    <select name="status" class="form-select form-select-sm status-select" onchange="this.form.submit();">
+                                        <option value="pending" {% if project.status == 'pending' %}selected{% endif %}>待处理</option>
+                                        <option value="in_progress" {% if project.status == 'in_progress' %}selected{% endif %}>处理中</option>
+                                        <option value="completed" {% if project.status == 'completed' %}selected{% endif %}>已完成</option>
+                                        <option value="cancelled" {% if project.status == 'cancelled' %}selected{% endif %}>已取消</option>
+                                    </select>
+                                </form>
                             </td>
                             <td>{{ project.created_at|date:"Y-m-d H:i" }}</td>
                             <td>{{ project.updated_at|date:"Y-m-d H:i" }}</td>
@@ -117,4 +118,49 @@
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 处理状态更改下拉框
+    const statusSelects = document.querySelectorAll('.status-select');
+    statusSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            const form = this.closest('form');
+            const originalValue = this.value;
+            
+            // 显示加载状态
+            this.disabled = true;
+            this.classList.add('disabled');
+            
+            // 发送请求
+            fetch(form.getAttribute('action'), {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrf-token]').content
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // 刷新页面以显示更新的结果
+                    location.reload();
+                } else {
+                    console.error('更新失败');
+                    this.value = originalValue;
+                    this.disabled = false;
+                    this.classList.remove('disabled');
+                }
+            })
+            .catch(error => {
+                console.error('错误:', error);
+                this.value = originalValue;
+                this.disabled = false;
+                this.classList.remove('disabled');
+            });
+        });
+    });
+});
+</script>
 {% endblock %}

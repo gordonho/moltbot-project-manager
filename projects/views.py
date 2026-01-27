@@ -7,6 +7,20 @@ def project_list(request):
     """项目列表页面"""
     status_filter = request.GET.get('status', '')
     
+    if request.method == 'POST':
+        # 处理直接状态更新
+        project_id = request.POST.get('project_id')
+        new_status = request.POST.get('status')
+        if project_id and new_status:
+            try:
+                project = Project.objects.get(pk=project_id)
+                project.status = new_status
+                project.save()
+                messages.success(request, '项目状态更新成功！')
+            except Project.DoesNotExist:
+                messages.error(request, '项目不存在！')
+        return redirect('project_list')
+    
     if status_filter:
         projects = Project.objects.filter(status=status_filter)
     else:
