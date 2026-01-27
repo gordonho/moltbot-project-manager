@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if project %}编辑项目{% else %}创建项目{% endif %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4>{% if project %}编辑项目{% else %}创建新项目{% endif %}</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="title" class="form-label">项目标题 *</label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               value="{% if project %}{{ project.title }}{% endif %}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">项目描述</label>
+                        <textarea class="form-control" id="description" name="description" rows="4">{% if project %}{{ project.description }}{% endif %}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="status" class="form-label">状态</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="pending" {% if project and project.status == 'pending' or not project %}selected{% endif %}>待处理</option>
+                            <option value="in_progress" {% if project and project.status == 'in_progress' %}selected{% endif %}>处理中</option>
+                            <option value="completed" {% if project and project.status == 'completed' %}selected{% endif %}>已完成</option>
+                            <option value="cancelled" {% if project and project.status == 'cancelled' %}selected{% endif %}>已取消</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="result" class="form-label">处理结果</label>
+                        <textarea class="form-control" id="result" name="result" rows="6">{% if project %}{{ project.result }}{% endif %}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">备注</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="4">{% if project %}{{ project.notes }}{% endif %}</textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'project_list' %}" class="btn btn-secondary me-md-2">取消</a>
+                        <button type="submit" class="btn btn-primary">{% if project %}更新{% else %}创建{% endif %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}删除项目{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4>删除项目</h4>
+            </div>
+            <div class="card-body">
+                <p>您确定要删除项目 "<strong>{{ project.title }}</strong>" 吗？</p>
+                <p class="text-danger">此操作不可撤销！</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'project_list' %}" class="btn btn-secondary me-md-2">取消</a>
+                        <button type="submit" class="btn btn-danger">确认删除</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
