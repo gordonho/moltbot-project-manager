@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-8 mx-auto">
+    <div class="col-12 col-md-8 mx-auto">
         <div class="card">
             <div class="card-header">
                 <h4>{% if project %}编辑项目{% else %}创建新项目{% endif %}</h4>
@@ -44,9 +44,9 @@
                         <textarea class="form-control" id="notes" name="notes" rows="4">{% if project %}{{ project.notes }}{% endif %}</textarea>
                     </div>
                     
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{% url 'project_list' %}" class="btn btn-secondary me-md-2">取消</a>
+                    <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">{% if project %}更新{% else %}创建{% endif %}</button>
+                        <a href="{% url 'project_list' %}" class="btn btn-secondary">取消</a>
                     </div>
                 </form>
             </div>
