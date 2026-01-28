@@ -278,23 +278,24 @@
     /* 标题列 - 控制项目标题显示 */
     .table th:first-child,
     .table td:first-child {
-        width: 25%; /* 标题列占25%宽度 */
+        width: 15%; /* 标题列减小到15%宽度，以解决标题太宽的问题 */
         word-wrap: break-word;
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap; /* 确保标题不会换行占用过多空间 */
     }
     
     /* 状态列 */
     .table th:nth-child(2),
     .table td:nth-child(2) {
-        width: 20%; /* 状态列占20%宽度 */
+        width: 25%; /* 状态列占25%宽度，给操作列更多空间 */
     }
     
     /* 操作列 - 给予更多空间 */
     .table th:last-child,
     .table td:last-child {
-        width: 35%; /* 操作列占35%宽度 */
-        min-width: 130px; /* 确保按钮有足够空间 */
+        width: 40%; /* 操作列增加到40%宽度，解决操作按钮太窄的问题 */
+        min-width: 150px; /* 确保按钮有足够空间 */
     }
     
     /* 对于中间的时间列（隐藏的列），不分配固定宽度 */
@@ -304,19 +305,26 @@
     
     /* 调整操作按钮容器 */
     .table td:last-child .d-flex.flex-wrap.gap-1 {
-        justify-content: center;
-        gap: 0.1rem !important; /* 减小按钮之间的间距 */
+        justify-content: space-between; /* 均匀分布按钮 */
+        gap: 0.05rem !important; /* 减小按钮之间的间距 */
     }
     
     /* 确保按钮在操作列中合适显示 */
     .table td:last-child .btn {
         flex: 1; /* 平均分配空间 */
         margin: 0.05rem;
-        font-size: 0.55rem;
-        padding: 0.05rem 0.08rem;
-        min-height: 18px;
+        font-size: 0.5rem; /* 稍微增大字体以便触摸 */
+        padding: 0.1rem 0.1rem;
+        min-height: 24px; /* 增加按钮高度以便触摸 */
         text-align: center;
-        max-width: 30%; /* 防止按钮过大 */
+        max-width: 32%; /* 防止按钮过大 */
+    }
+    
+    /* 特别优化状态选择器在移动端的显示 */
+    .status-select {
+        font-size: 0.5rem;
+        padding: 0.1rem 0.1rem;
+        min-height: 24px;
     }
 }
 

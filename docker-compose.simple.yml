@@ -10,6 +10,7 @@ services:
       - SECRET_KEY=your-secret-key-here
       - ALLOWED_HOSTS=*
     volumes:
+      - .:/app  # 挂载整个项目目录
       - ./db.sqlite3:/app/db.sqlite3  # 持久化数据库
       - ./media:/app/media
       - ./static:/app/static
