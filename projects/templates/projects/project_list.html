@@ -71,7 +71,6 @@
                             <td class="d-none d-md-table-cell">{{ project.updated_at|date:"Y-m-d H:i" }}</td>
                             <td>
                                 <div class="d-flex flex-wrap gap-1">
-                                    <a href="{% url 'project_detail' project.pk %}" class="btn btn-sm btn-outline-info">查看</a>
                                     <a href="{% url 'project_edit' project.pk %}" class="btn btn-sm btn-outline-primary">编辑</a>
                                     <a href="{% url 'project_delete' project.pk %}" class="btn btn-sm btn-outline-danger">删除</a>
                                 </div>
