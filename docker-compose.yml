@@ -6,17 +6,25 @@ services:
     ports:
       - "8000:8000"
     volumes:
+      # 挂载整个项目目录以实现代码热更新
+      - .:/app
+      # 持久化媒体文件
       - ./media:/app/media
+      # 持久化静态文件
       - ./static:/app/static
+      # 持久化数据库文件
+      - ./db_data:/app/db_data
     environment:
-      - DEBUG=0
-      - DATABASE_URL=sqlite:///db.sqlite3
+      - DEBUG=1
+      - DATABASE_URL=sqlite:////app/db_data/db.sqlite3
     depends_on:
       - db
     command: >
       sh -c "python manage.py migrate &&
              python manage.py collectstatic --noinput &&
-             gunicorn --bind 0.0.0.0:8000 project_manager.wsgi:application"
+             python manage.py runserver 0.0.0.0:8000"
+    # 注意：对于开发用途，我们使用Django的开发服务器以支持代码热更新
+    # 生产环境应使用 gunicorn --bind 0.0.0.0:8000 project_manager.wsgi:application
 
   db:
     image: postgres:13

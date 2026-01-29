@@ -1,10 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
+from django.core.paginator import Paginator
+from django.db.models import Q
 from .models import Project, Task
 
 
 def project_list(request):
     """项目列表页面"""
+    # 获取搜索查询参数
+    query = request.GET.get('q')
     status_filter = request.GET.get('status', '')
     
     if request.method == 'POST':
@@ -21,10 +25,21 @@ def project_list(request):
                 messages.error(request, '项目不存在！')
         return redirect('project_list')
     
+    # 获取所有项目
+    projects = Project.objects.all()
+    
+    # 如果有状态过滤，则应用过滤
     if status_filter:
-        projects = Project.objects.filter(status=status_filter)
-    else:
-        projects = Project.objects.all()
+        projects = projects.filter(status=status_filter)
+    
+    # 如果有搜索查询，则进行全文检索
+    if query:
+        projects = projects.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(result__icontains=query) |
+            Q(notes__icontains=query)
+        )
     
     # 获取所有可能的状态值用于过滤选项
     all_statuses = Project.STATUS_CHOICES
@@ -36,8 +51,14 @@ def project_list(request):
     completed_count = Project.objects.filter(status='completed').count()
     cancelled_count = Project.objects.filter(status='cancelled').count()
     
+    # 分页处理
+    paginator = Paginator(projects, 10)  # 每页显示10个项目
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
     return render(request, 'projects/project_list.html', {
-        'projects': projects,
+        'projects': page_obj,
+        'query': query,
         'selected_status': status_filter,
         'all_statuses': all_statuses,
         'total_count': total_count,
