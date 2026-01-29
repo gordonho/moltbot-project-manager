@@ -176,11 +176,11 @@
                 <p class="mb-0">
                     {% if query or selected_status %}
                         {% if query and selected_status %}
-                            未找到匹配 "{{ query }}" 且状态为 "{{ all_statuses|dictsort:'0'|get_item:selected_status|default:'未知状态' }}" 的项目。
+                            未找到匹配 "{{ query }}" 且状态为 "{{ selected_status }}" 的项目。
                         {% elif query %}
                             未找到匹配 "{{ query }}" 的项目。
                         {% elif selected_status %}
-                            未找到状态为 "{{ all_statuses|dictsort:'0'|get_item:selected_status|default:'未知状态' }}" 的项目。
+                            未找到状态为 "{{ selected_status }}" 的项目。
                         {% endif %}
                         <a href="{% url 'project_list' %}">查看全部项目</a>
                     {% else %}
