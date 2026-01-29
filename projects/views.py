@@ -9,9 +9,28 @@ def project_list(request):
     """项目列表页面"""
     # 获取搜索查询参数
     query = request.GET.get('q')
+    status_filter = request.GET.get('status', '')
+    
+    if request.method == 'POST':
+        # 处理直接状态更新
+        project_id = request.POST.get('project_id')
+        new_status = request.POST.get('status')
+        if project_id and new_status:
+            try:
+                project = Project.objects.get(pk=project_id)
+                project.status = new_status
+                project.save()
+                messages.success(request, '项目状态更新成功！')
+            except Project.DoesNotExist:
+                messages.error(request, '项目不存在！')
+        return redirect('project_list')
     
     # 获取所有项目
     projects = Project.objects.all()
+    
+    # 如果有状态过滤，则应用过滤
+    if status_filter:
+        projects = projects.filter(status=status_filter)
     
     # 如果有搜索查询，则进行全文检索
     if query:
@@ -22,6 +41,16 @@ def project_list(request):
             Q(notes__icontains=query)
         )
     
+    # 获取所有可能的状态值用于过滤选项
+    all_statuses = Project.STATUS_CHOICES
+    
+    # 统计各个状态的项目数量
+    total_count = Project.objects.count()
+    pending_count = Project.objects.filter(status='pending').count()
+    in_progress_count = Project.objects.filter(status='in_progress').count()
+    completed_count = Project.objects.filter(status='completed').count()
+    cancelled_count = Project.objects.filter(status='cancelled').count()
+    
     # 分页处理
     paginator = Paginator(projects, 10)  # 每页显示10个项目
     page_number = request.GET.get('page')
@@ -29,7 +58,14 @@ def project_list(request):
     
     return render(request, 'projects/project_list.html', {
         'projects': page_obj,
-        'query': query
+        'query': query,
+        'selected_status': status_filter,
+        'all_statuses': all_statuses,
+        'total_count': total_count,
+        'pending_count': pending_count,
+        'in_progress_count': in_progress_count,
+        'completed_count': completed_count,
+        'cancelled_count': cancelled_count
     })
 
 

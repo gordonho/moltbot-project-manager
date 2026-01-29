@@ -7,14 +7,30 @@
     <div class="col-md-12">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 gap-2">
             <h2>项目列表</h2>
-            <div class="d-flex gap-2">
-                <form method="GET" class="d-flex gap-2" style="flex-grow: 1; max-width: 400px;">
+            <div class="d-flex gap-2 flex-wrap">
+                <!-- 搜索框 -->
+                <form method="GET" class="d-flex gap-2 flex-fill" style="max-width: 400px;">
                     <input type="text" name="q" value="{{ query }}" placeholder="搜索项目..." class="form-control">
                     <button type="submit" class="btn btn-outline-secondary">搜索</button>
                     {% if query %}
                         <a href="{% url 'project_list' %}" class="btn btn-outline-secondary">清除</a>
                     {% endif %}
                 </form>
+                <!-- 状态过滤 -->
+                <form method="GET" class="d-flex flex-fill" style="max-width: 200px;">
+                    <select name="status" class="form-select form-select-sm" onchange="this.form.submit();">
+                        <option value="">所有状态</option>
+                        {% for status_value, status_label in all_statuses %}
+                            <option value="{{ status_value }}" {% if selected_status == status_value %}selected{% endif %}>
+                                {{ status_label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+                </form>
+                {% if selected_status or query %}
+                    <a href="{% url 'project_list' %}" class="btn btn-sm btn-outline-secondary">清除</a>
+                {% endif %}
                 <a href="{% url 'project_create' %}" class="btn btn-primary">新增项目</a>
             </div>
         </div>
@@ -26,8 +42,8 @@
                         <tr>
                             <th>标题</th>
                             <th>状态</th>
-                            <th>创建时间</th>
-                            <th>更新时间</th>
+                            <th class="d-none d-md-table-cell">创建时间</th>
+                            <th class="d-none d-md-table-cell">更新时间</th>
                             <th>操作</th>
                         </tr>
                     </thead>
@@ -40,22 +56,25 @@
                                 </a>
                             </td>
                             <td>
-                                {% if project.status == 'pending' %}
-                                    <span class="badge bg-secondary">待处理</span>
-                                {% elif project.status == 'in_progress' %}
-                                    <span class="badge bg-warning text-dark">处理中</span>
-                                {% elif project.status == 'completed' %}
-                                    <span class="badge bg-success">已完成</span>
-                                {% elif project.status == 'cancelled' %}
-                                    <span class="badge bg-danger">已取消</span>
-                                {% endif %}
+                                <form method="post" action="{% url 'project_list' %}" class="d-inline status-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="project_id" value="{{ project.pk }}">
+                                    <select name="status" class="form-select form-select-sm status-select" onchange="this.form.submit();">
+                                        <option value="pending" {% if project.status == 'pending' %}selected{% endif %}>待处理</option>
+                                        <option value="in_progress" {% if project.status == 'in_progress' %}selected{% endif %}>处理中</option>
+                                        <option value="completed" {% if project.status == 'completed' %}selected{% endif %}>已完成</option>
+                                        <option value="cancelled" {% if project.status == 'cancelled' %}selected{% endif %}>已取消</option>
+                                    </select>
+                                </form>
                             </td>
-                            <td>{{ project.created_at|date:"Y-m-d H:i" }}</td>
-                            <td>{{ project.updated_at|date:"Y-m-d H:i" }}</td>
+                            <td class="d-none d-md-table-cell">{{ project.created_at|date:"Y-m-d H:i" }}</td>
+                            <td class="d-none d-md-table-cell">{{ project.updated_at|date:"Y-m-d H:i" }}</td>
                             <td>
-                                <a href="{% url 'project_detail' project.pk %}" class="btn btn-sm btn-outline-info">查看</a>
-                                <a href="{% url 'project_edit' project.pk %}" class="btn btn-sm btn-outline-primary">编辑</a>
-                                <a href="{% url 'project_delete' project.pk %}" class="btn btn-sm btn-outline-danger">删除</a>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <a href="{% url 'project_detail' project.pk %}" class="btn btn-sm btn-outline-info">查看</a>
+                                    <a href="{% url 'project_edit' project.pk %}" class="btn btn-sm btn-outline-primary">编辑</a>
+                                    <a href="{% url 'project_delete' project.pk %}" class="btn btn-sm btn-outline-danger">删除</a>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -69,10 +88,10 @@
                     <ul class="pagination justify-content-center">
                         {% if projects.has_previous %}
                             <li class="page-item">
-                                <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}">首页</a>
+                                <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}page=1">首页</a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ projects.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">上一页</a>
+                                <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}page={{ projects.previous_page_number }}">上一页</a>
                             </li>
                         {% else %}
                             <li class="page-item disabled">
@@ -91,10 +110,10 @@
 
                         {% if projects.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ projects.next_page_number }}{% if query %}&q={{ query }}{% endif %}">下一页</a>
+                                <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}page={{ projects.next_page_number }}">下一页</a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ projects.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">末页</a>
+                                <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}page={{ projects.paginator.num_pages }}">末页</a>
                             </li>
                         {% else %}
                             <li class="page-item disabled">
@@ -108,14 +127,61 @@
                 </nav>
             {% endif %}
             
+            <!-- 项目统计 - 移动端友好布局 -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">项目统计</h5>
+                    <div class="row row-cols-2 row-cols-md-4 g-2">
+                        <div class="col">
+                            <div class="card h-100 bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="card-subtitle mb-1 text-muted">总计</h6>
+                                    <p class="card-text display-6" style="font-size: 1.5rem;">{{ total_count }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card h-100 bg-secondary bg-opacity-10">
+                                <div class="card-body text-center">
+                                    <h6 class="card-subtitle mb-1 text-muted">待处理</h6>
+                                    <p class="card-text display-6" style="font-size: 1.5rem;">{{ pending_count }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card h-100 bg-warning bg-opacity-10">
+                                <div class="card-body text-center">
+                                    <h6 class="card-subtitle mb-1 text-muted">处理中</h6>
+                                    <p class="card-text display-6" style="font-size: 1.5rem;">{{ in_progress_count }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card h-100 bg-success bg-opacity-10">
+                                <div class="card-body text-center">
+                                    <h6 class="card-subtitle mb-1 text-muted">已完成</h6>
+                                    <p class="card-text display-6" style="font-size: 1.5rem;">{{ completed_count }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="mt-3">
                 <p class="text-muted">共 {{ projects.paginator.count }} 个项目</p>
             </div>
         {% else %}
             <div class="alert alert-info">
                 <p class="mb-0">
-                    {% if query %}
-                        未找到匹配 "{{ query }}" 的项目。
+                    {% if query or selected_status %}
+                        {% if query and selected_status %}
+                            未找到匹配 "{{ query }}" 且状态为 "{{ all_statuses|dictsort:'0'|get_item:selected_status|default:'未知状态' }}" 的项目。
+                        {% elif query %}
+                            未找到匹配 "{{ query }}" 的项目。
+                        {% elif selected_status %}
+                            未找到状态为 "{{ all_statuses|dictsort:'0'|get_item:selected_status|default:'未知状态' }}" 的项目。
+                        {% endif %}
                         <a href="{% url 'project_list' %}">查看全部项目</a>
                     {% else %}
                         暂无项目，请 <a href="{% url 'project_create' %}">创建新项目</a>
@@ -125,4 +191,49 @@
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 处理状态更改下拉框
+    const statusSelects = document.querySelectorAll('.status-select');
+    statusSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            const form = this.closest('form');
+            const originalValue = this.value;
+            
+            // 显示加载状态
+            this.disabled = true;
+            this.classList.add('disabled');
+            
+            // 发送请求
+            fetch(form.getAttribute('action'), {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrf-token]').content
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // 刷新页面以显示更新的结果
+                    location.reload();
+                } else {
+                    console.error('更新失败');
+                    this.value = originalValue;
+                    this.disabled = false;
+                    this.classList.remove('disabled');
+                }
+            })
+            .catch(error => {
+                console.error('错误:', error);
+                this.value = originalValue;
+                this.disabled = false;
+                this.classList.remove('disabled');
+            });
+        });
+    });
+});
+</script>
 {% endblock %}

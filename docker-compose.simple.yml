@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=0
+      - SECRET_KEY=your-secret-key-here
+      - ALLOWED_HOSTS=*
+    volumes:
+      - .:/app  # 挂载整个项目目录
+      - ./db.sqlite3:/app/db.sqlite3  # 持久化数据库
+      - ./media:/app/media
+      - ./static:/app/static
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput &&
+             gunicorn --bind 0.0.0.0:8000 --workers 3 project_manager.wsgi:application"

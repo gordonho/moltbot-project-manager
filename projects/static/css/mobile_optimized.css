@@ -1,0 +1,364 @@
+/* 移动端优化样式 */
+@media (max-width: 768px) {
+    /* 调整整体布局 */
+    body {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    
+    .container {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    
+    /* 标题调整 */
+    h1 {
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    h2 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* 表格优化 - 在小屏幕上转换为卡片式布局 */
+    .table-responsive {
+        border: none;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* 隐藏某些列在移动端 */
+    .d-none.d-md-table-cell {
+        display: none !important;
+    }
+    
+    /* 为移动端优化表单元素 */
+    .form-select, .form-control {
+        font-size: 16px; /* 防止iOS缩放 */
+        padding: 6px 10px;
+        min-height: 36px;
+    }
+    
+    /* 按钮组垂直堆叠 */
+    .d-flex.flex-wrap.gap-1 {
+        flex-direction: column !important;
+        align-items: stretch;
+    }
+    
+    .d-flex.flex-wrap.gap-1 > * {
+        margin: 0 0 4px 0 !important;
+        width: 100%;
+    }
+    
+    /* 操作按钮紧凑化 - 特别针对表格中的按钮 */
+    .btn-sm {
+        padding: 0.1rem 0.15rem;
+        font-size: 0.6rem;
+        line-height: 1.2;
+        min-height: 22px;
+    }
+    
+    /* 缩小所有按钮尺寸，防止撑大表格 */
+    .btn {
+        font-size: 0.6rem;
+        padding: 0.1rem 0.15rem;
+        line-height: 1.2;
+        min-height: 22px;
+    }
+    
+    /* 特别缩小表格内的按钮 */
+    table .btn {
+        font-size: 0.55rem;
+        padding: 0.05rem 0.1rem;
+        min-height: 20px;
+        margin: 0.05rem 0.05rem;
+    }
+    
+    /* 针对不同类型的按钮进行优化 */
+    .btn-outline-info, 
+    .btn-outline-primary, 
+    .btn-outline-danger,
+    .btn-outline-secondary {
+        font-size: 0.55rem;
+        padding: 0.05rem 0.1rem;
+        min-height: 20px;
+    }
+    
+    /* 卡片式布局优化 */
+    .card {
+        margin-bottom: 15px;
+    }
+    
+    .card-body {
+        padding: 0.75rem;
+    }
+    
+    /* 状态选择器优化 */
+    .status-select {
+        min-width: auto;
+        width: 100%;
+        margin-bottom: 5px;
+        font-size: 0.6rem;
+        padding: 0.05rem 0.1rem;
+        min-height: 24px;
+    }
+    
+    /* 统计卡片在移动端垂直排列 */
+    .row.row-cols-2.row-cols-md-4.g-2 {
+        --bs-gutter-x: 0.25rem;
+        --bs-gutter-y: 0.25rem;
+    }
+    
+    .col {
+        padding: 0.25rem;
+    }
+    
+    .card.h-100 {
+        height: auto !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* 表格单元格优化 - 减少内边距 */
+    .table td, .table th {
+        padding: 0.1rem 0.05rem;
+        font-size: 0.7rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* 优化表格列宽 - 标题列缩小，操作列放大 */
+    .table th:nth-child(1), .table td:nth-child(1) { /* 标题列 */
+        width: 30%;
+        max-width: 30%;
+        min-width: 0; /* 允许列收缩 */
+    }
+    
+    .table th:nth-child(5), .table td:nth-child(5) { /* 操作列 */
+        width: 30%;
+        min-width: 120px; /* 确保操作列有足够的空间 */
+    }
+    
+    /* 链接优化 */
+    a {
+        word-break: break-word;
+    }
+    
+    /* 搜索和过滤区域优化 */
+    .d-flex.flex-column.align-items-start.gap-2.mb-3 {
+        gap: 0.5rem !important;
+    }
+    
+    .d-flex.flex-wrap.gap-2.w-100 {
+        flex-direction: column;
+    }
+    
+    .form-select-sm {
+        min-width: 100%;
+        font-size: 0.7rem;
+        min-height: 26px;
+    }
+}
+
+/* 针对非常小的屏幕进一步优化 */
+@media (max-width: 576px) {
+    body {
+        font-size: 13px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    
+    h1 {
+        font-size: 1.4rem;
+    }
+    
+    h2 {
+        font-size: 1.2rem;
+    }
+    
+    .table td, .table th {
+        padding: 0.1rem 0.05rem;
+        font-size: 0.7rem;
+    }
+    
+    .btn {
+        font-size: 0.6rem;
+        padding: 0.1rem 0.2rem;
+        min-height: 20px;
+    }
+    
+    table .btn {
+        font-size: 0.6rem;
+        padding: 0.05rem 0.1rem;
+        min-height: 18px;
+    }
+    
+    .card-body {
+        padding: 0.5rem;
+    }
+    
+    /* 进一步压缩统计卡片 */
+    .display-6 {
+        font-size: 1.1rem !important;
+    }
+    
+    .card-subtitle {
+        font-size: 0.7rem;
+    }
+    
+    /* 额外缩小超小屏上的按钮 */
+    table .btn {
+        font-size: 0.55rem;
+        padding: 0.05rem 0.1rem;
+    }
+    
+    .btn-sm {
+        font-size: 0.6rem;
+        padding: 0.08rem 0.15rem;
+    }
+    
+    .status-select {
+        font-size: 0.65rem;
+        padding: 0.08rem 0.15rem;
+        min-height: 26px;
+    }
+}
+
+/* 针对触摸优化交互元素 - 但在移动端保持较小按钮 */
+@media (hover: none) and (pointer: coarse) {
+    /* 在移动端保持小按钮，但确保足够的触摸区域 */
+    table .btn {
+        font-size: 0.65rem;
+        padding: 0.1rem 0.2rem;
+        min-height: 24px;
+    }
+    
+    .btn {
+        min-height: 28px; /* 保持最小高度以便触摸 */
+    }
+    
+    .status-select {
+        min-height: 32px; /* 确保下拉菜单易于点击 */
+    }
+}
+
+/* 横屏模式优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    body {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    
+    .table-responsive {
+        max-height: 30vh;
+        overflow-y: auto;
+    }
+    
+    .table td, .table th {
+        padding: 0.1rem 0.05rem;
+        font-size: 0.7rem;
+    }
+    
+    .btn {
+        font-size: 0.65rem;
+        padding: 0.1rem 0.2rem;
+    }
+}
+
+/* 额外的移动端表格优化 - 确保标题列和操作列的宽度分配 */
+@media (max-width: 768px) {
+    /* 表格布局优化 */
+    table.table {
+        table-layout: fixed; /* 固定表格布局以控制列宽 */
+    }
+    
+    /* 标题列 - 控制项目标题显示 */
+    .table th:first-child,
+    .table td:first-child {
+        width: 15%; /* 标题列减小到15%宽度，以解决标题太宽的问题 */
+        word-wrap: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap; /* 确保标题不会换行占用过多空间 */
+    }
+    
+    /* 状态列 */
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+        width: 25%; /* 状态列占25%宽度，给操作列更多空间 */
+    }
+    
+    /* 操作列 - 给予更多空间 */
+    .table th:last-child,
+    .table td:last-child {
+        width: 40%; /* 操作列增加到40%宽度，解决操作按钮太窄的问题 */
+        min-width: 150px; /* 确保按钮有足够空间 */
+    }
+    
+    /* 对于中间的时间列（隐藏的列），不分配固定宽度 */
+    .d-none.d-md-table-cell {
+        display: none !important;
+    }
+    
+    /* 调整操作按钮容器 */
+    .table td:last-child .d-flex.flex-wrap.gap-1 {
+        justify-content: space-between; /* 均匀分布按钮 */
+        gap: 0.05rem !important; /* 减小按钮之间的间距 */
+    }
+    
+    /* 确保按钮在操作列中合适显示 */
+    .table td:last-child .btn {
+        flex: 1; /* 平均分配空间 */
+        margin: 0.05rem;
+        font-size: 0.5rem; /* 稍微增大字体以便触摸 */
+        padding: 0.1rem 0.1rem;
+        min-height: 24px; /* 增加按钮高度以便触摸 */
+        text-align: center;
+        max-width: 32%; /* 防止按钮过大 */
+    }
+    
+    /* 特别优化状态选择器在移动端的显示 */
+    .status-select {
+        font-size: 0.5rem;
+        padding: 0.1rem 0.1rem;
+        min-height: 24px;
+    }
+}
+
+/* 超小屏幕优化 */
+@media (max-width: 480px) {
+    /* 进一步调整列宽 */
+    .table th:first-child,
+    .table td:first-child {
+        width: 20%; /* 标题列进一步缩小 */
+    }
+    
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+        width: 25%; /* 状态列稍微增加 */
+    }
+    
+    .table th:last-child,
+    .table td:last-child {
+        width: 40%; /* 操作列进一步增加 */
+        min-width: 120px;
+    }
+    
+    /* 进一步缩小按钮 */
+    .table td:last-child .btn {
+        font-size: 0.5rem;
+        padding: 0.03rem 0.06rem;
+        min-height: 16px;
+        max-width: 32%;
+    }
+    
+    /* 进一步缩小状态选择器 */
+    .status-select {
+        font-size: 0.55rem;
+        padding: 0.03rem 0.08rem;
+        min-height: 22px;
+    }
+}
