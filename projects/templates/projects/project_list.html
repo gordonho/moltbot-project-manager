@@ -5,9 +5,18 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 gap-2">
             <h2>项目列表</h2>
-            <a href="{% url 'project_create' %}" class="btn btn-primary">新增项目</a>
+            <div class="d-flex gap-2">
+                <form method="GET" class="d-flex gap-2" style="flex-grow: 1; max-width: 400px;">
+                    <input type="text" name="q" value="{{ query }}" placeholder="搜索项目..." class="form-control">
+                    <button type="submit" class="btn btn-outline-secondary">搜索</button>
+                    {% if query %}
+                        <a href="{% url 'project_list' %}" class="btn btn-outline-secondary">清除</a>
+                    {% endif %}
+                </form>
+                <a href="{% url 'project_create' %}" class="btn btn-primary">新增项目</a>
+            </div>
         </div>
         
         {% if projects %}
@@ -53,9 +62,65 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- 分页导航 -->
+            {% if projects.has_other_pages %}
+                <nav aria-label="项目列表分页">
+                    <ul class="pagination justify-content-center">
+                        {% if projects.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}">首页</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ projects.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">上一页</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">首页</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">上一页</span>
+                            </li>
+                        {% endif %}
+
+                        <li class="page-item active">
+                            <span class="page-link">
+                                第 {{ projects.number }} 页，共 {{ projects.paginator.num_pages }} 页
+                            </span>
+                        </li>
+
+                        {% if projects.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ projects.next_page_number }}{% if query %}&q={{ query }}{% endif %}">下一页</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ projects.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">末页</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">下一页</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">末页</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+            
+            <div class="mt-3">
+                <p class="text-muted">共 {{ projects.paginator.count }} 个项目</p>
+            </div>
         {% else %}
             <div class="alert alert-info">
-                <p class="mb-0">暂无项目，请 <a href="{% url 'project_create' %}">创建新项目</a></p>
+                <p class="mb-0">
+                    {% if query %}
+                        未找到匹配 "{{ query }}" 的项目。
+                        <a href="{% url 'project_list' %}">查看全部项目</a>
+                    {% else %}
+                        暂无项目，请 <a href="{% url 'project_create' %}">创建新项目</a>
+                    {% endif %}
+                </p>
             </div>
         {% endif %}
     </div>

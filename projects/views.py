@@ -1,12 +1,36 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
+from django.core.paginator import Paginator
+from django.db.models import Q
 from .models import Project, Task
 
 
 def project_list(request):
     """项目列表页面"""
+    # 获取搜索查询参数
+    query = request.GET.get('q')
+    
+    # 获取所有项目
     projects = Project.objects.all()
-    return render(request, 'projects/project_list.html', {'projects': projects})
+    
+    # 如果有搜索查询，则进行全文检索
+    if query:
+        projects = projects.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(result__icontains=query) |
+            Q(notes__icontains=query)
+        )
+    
+    # 分页处理
+    paginator = Paginator(projects, 10)  # 每页显示10个项目
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'projects/project_list.html', {
+        'projects': page_obj,
+        'query': query
+    })
 
 
 def project_detail(request, pk):
