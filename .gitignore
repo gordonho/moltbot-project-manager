@@ -42,6 +42,9 @@ local_settings.py
 # db.sqlite3
 media/
 
+# Stock data
+stock_data/
+
 # Environment variables
 .env
 .env.local
